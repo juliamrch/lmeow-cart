@@ -1,27 +1,20 @@
+"use client"
+
+import SideNav from "@/components/sidenav";
+
 import "@/styles/globals.css";
 import { Metadata } from "next";
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
-import { Providers } from "./providers";
-import { Navbar } from "@/components/navbar";
+import { Providers } from "@/app/providers";
+
 import { Link } from "@nextui-org/link";
 import clsx from "clsx";
+import React from 'react';
 
-export const metadata: Metadata = {
-	title: {
-		default: siteConfig.name,
-		template: `%s - ${siteConfig.name}`,
-	},
-	description: siteConfig.description,
-	
-	icons: {
-		icon: "/favicon.ico",
-		shortcut: "/favicon-16x16.png",
-		apple: "/apple-touch-icon.png",
-	},
-};
 
-export default function RootLayout({
+
+function AdminPage({
 	children,
 }: {
 	children: React.ReactNode;
@@ -37,7 +30,13 @@ export default function RootLayout({
 			>
 				<Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
 					<div className="relative flex flex-col h-screen">
-						<Navbar />
+					<div className="flex h-screen flex-col md:flex-row md:overflow-hidden">
+					  <div className="w-full flex-none md:w-64">
+					  
+						<SideNav />
+					  </div>
+					  <div className="flex-grow p-6 md:overflow-y-auto md:p-12">{children}</div>
+					</div>
 						<main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow">
 							{children}
 						</main>
@@ -58,3 +57,5 @@ export default function RootLayout({
 		</html>
 	);
 }
+
+export default AdminPage;

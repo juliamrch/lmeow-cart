@@ -26,30 +26,15 @@ import {
 	HeartFilledIcon,
 	SearchIcon,
 } from "@/components/icons";
-import { button as buttonStyles } from "@nextui-org/theme";
+
+import {
+    Cog6ToothIcon,
+} from "@heroicons/react/24/outline";
+
 import { Logo } from "@/components/icons";
 
-export const Navbar = () => {
-	const searchInput = (
-		<Input
-			aria-label="Search"
-			classNames={{
-				inputWrapper: "bg-default-100",
-				input: "text-sm",
-			}}
-			endContent={
-				<Kbd className="hidden lg:inline-block" keys={["command"]}>
-					K
-				</Kbd>
-			}
-			labelPlacement="outside"
-			placeholder="Search..."
-			startContent={
-				<SearchIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />
-			}
-			type="search"
-		/>
-	);
+export const AdminNavbar = () => {
+	
 
 	return (
 		<NextUINavbar maxWidth="xl" position="sticky">
@@ -83,45 +68,14 @@ export const Navbar = () => {
 				justify="end"
 			>
 				<NavbarItem className="hidden sm:flex gap-2">
-					<Link isExternal href={siteConfig.links.twitter} aria-label="Twitter">
+					<Link  href={siteConfig.adminItems[0].settings} aria-label="Settings">
 						<TwitterIcon className="text-default-500" />
 					</Link>
-					<Link isExternal href={siteConfig.links.discord} aria-label="Discord">
-						<DiscordIcon className="text-default-500" />
-					</Link>
-					<Link isExternal href={siteConfig.links.github} aria-label="Github">
-						<GithubIcon className="text-default-500" />
-					</Link>
-					<ThemeSwitch />
-				</NavbarItem>
-				<NavbarItem className="hidden lg:flex">{searchInput}</NavbarItem>
-				<NavbarItem className="hidden md:flex">
-
-			
-				<div className="flex gap-3">
-				  <Link
-					isExternal
-					href={siteConfig.links.docs}
-					/*style={{ backgroundColor: '#FF4ECD', color: 'white' }}*/
-					className={buttonStyles({ color: "secondary", radius: "full", variant: "shadow" })}
-				  >
-				    Connect Wallet
-				  </Link>
-			  </div>
-			
-				</NavbarItem>
-			</NavbarContent>
-
-			<NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
-				<Link isExternal href={siteConfig.links.github} aria-label="Github">
-					<GithubIcon className="text-default-500" />
-				</Link>
-				<ThemeSwitch />
-				<NavbarMenuToggle />
-			</NavbarContent>
+                </NavbarItem>
+            </NavbarContent>
 
 			<NavbarMenu>
-				{searchInput}
+				
 				<div className="mx-4 mt-2 flex flex-col gap-2">
 					{siteConfig.navMenuItems.map((item, index) => (
 						<NavbarMenuItem key={`${item}-${index}`}>

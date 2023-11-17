@@ -1,4 +1,4 @@
-export default function DocsLayout({
+export default function SetUp({
 	children,
 }: {
 	children: React.ReactNode;
