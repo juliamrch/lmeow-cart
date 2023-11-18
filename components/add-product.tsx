@@ -15,6 +15,16 @@ export default function AddProduct() {
   const [image, setImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  function clearProduct() {
+    setTitle('')
+    setDescription('')
+    setCategory('')
+    setPrice(0.0)
+    setStock(0)
+    setWeight(0.0)
+    setImage(null)
+  }
+
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const file = event.target.files[0];
@@ -51,9 +61,10 @@ export default function AddProduct() {
       const errorMessage = await response.text(); // Get the error message from the server
       console.error(errorMessage); // Log the error message
     } else {
-      // Handle success
-      console.log("Product updated successfully");
-      alert(`Product updated successfully: ${JSON.stringify(response)}`);
+        clearProduct()
+      const data = await response.json()
+      console.log("Product updated successfully",data);
+      alert(`Product updated successfully: ${data.id}`);
     }
   };
 
@@ -97,7 +108,6 @@ export default function AddProduct() {
               type="number"
               label="Price"
               name="price"
-              placeholder="0.00"
               labelPlacement="outside"
               value={price.toString()}
               onChange={(e) => setPrice(parseFloat(e.target.value))}
