@@ -1,4 +1,6 @@
 import { connectToDB,Binary } from '@/lib/mongodb';
+import path from 'path';
+import fs from 'fs';
 
 async function read(products, id) {
     return await products.findOne({ id })
@@ -16,7 +18,12 @@ export default async function handler(req, res) {
     const product = await read(products, id)
 
     if (!product.imageMime || !product.image) {
-        return res.status(400).send(null)
+        const filePath = path.join(process.cwd(), 'public', 'product', 'placeholder.png');
+        const img = fs.readFileSync(filePath);
+
+        res.setHeader('Content-Type', 'image/png');
+
+        return res.status(200).send(img)
     }
 
     res.setHeader('Content-Type', product.imageMime);
