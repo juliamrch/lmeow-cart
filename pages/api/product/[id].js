@@ -1,4 +1,5 @@
 import { connectToDB } from '@/lib/mongodb';
+import { isAdmin } from '@/lib/verifyJWT';
 
 async function read(products, id) {
     return await products.findOne({ id })
@@ -25,6 +26,10 @@ export default async function handler(req, res) {
 
     if (['GET', 'POST'].indexOf(req.method) === -1) {
         res.status(405).json({ error: 'Invalid method' });
+    }
+
+    if (isAdmin(req.cookies?.userToken) !== true) {
+        return res.status(401).json({ error: 'No access.' });
     }
 
     const db = await connectToDB();

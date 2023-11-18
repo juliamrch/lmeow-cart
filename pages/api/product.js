@@ -2,6 +2,7 @@ import { connectToDB, Binary, getNextSequence } from '@/lib/mongodb';
 import { CONFIG_COUNTERS_PRODUCTS } from '@/constants/config.js'
 import formidable from 'formidable';
 import fs from 'fs';
+import { isAdmin } from '@/lib/verifyJWT';
 
 async function read(products, skip, limit) {
     return await products.find().skip(skip).limit(limit).toArray()
@@ -10,7 +11,7 @@ async function read(products, skip, limit) {
 async function insert(products, obj) {
     const id = await getNextSequence(CONFIG_COUNTERS_PRODUCTS)
 
-    products.insertOne({
+    await products.insertOne({
         id,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -53,6 +54,10 @@ export default async function handler(req, res) {
             }
             break
         case 'PUT':
+            if (isAdmin(req.cookies?.userToken) !== true) {
+                return res.status(401).json({ error: 'No access.' });
+            }
+
             try {
                 const form = formidable({});
                 form.maxFileSize = 15 * 1024 * 1024; // 15MB
