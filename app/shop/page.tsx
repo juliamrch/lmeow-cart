@@ -9,6 +9,7 @@ interface Product {
   name: string;
   price: number;
   image: string;
+  id: number;
   // add other properties if needed
 }
 
@@ -35,10 +36,9 @@ export default function App() {
   return (
     <>
       <h1 className={title()}>Shop</h1>
-
       <Spacer y={40} />
 
-      <div className="gap-2 grid grid-cols-2 sm:grid-cols-1">
+      <div className="max-w-[900px] gap-2 grid grid-cols-12 grid-rows-2 px-8">
         {data.map((product: Product, index: number) => (
           <div key={index}>
             <Card isFooterBlurred className="w-full h-[400px] col-span-12 sm:col-span-5">
@@ -48,10 +48,9 @@ export default function App() {
               </CardHeader>
               <Image
                 removeWrapper
-                alt="Card example background"
                 className="z-0 w-full h-full scale-125 -translate-y-6 object-cover"
                 alt={product.name}
-                src={product.image ? "api/product/image/" + product.id : "https://placehold.co/600x400/png"}
+                src={"api/product/image/" + product.id}
               />
               <CardFooter className="absolute bg-white/30 bottom-0 border-t-1 border-zinc-100/50 z-10 justify-between">
                 <div>
