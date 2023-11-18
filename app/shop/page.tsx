@@ -1,60 +1,31 @@
 "use client";
 import ProductList from "@/components/product-list";
 
-import React, { useEffect, useState } from "react";
+import useSWR from 'swr';
 import { title } from "@/components/primitives";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Image,
-  Button,
-  useDisclosure,
-} from "@nextui-org/react";
-import { Spacer } from "@nextui-org/react";
-
-interface Product {
-  name: string;
-  price: number;
-  image: string;
-  id: number;
-  description: string;
-}
+import { Spacer, Spinner } from "@nextui-org/react";
 
 export default function ShopPage() {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure(); // Destructure onOpenChange here
-  const [data, setData] = useState<Product[] | null>(null);
+    const fetcher = (url: string) => fetch(url).then((res) => res.json());
+    const { data, error: loggedAccountError } = useSWR(process.env.NEXT_PUBLIC_API_ENDPOINT + '/product', fetcher, {
+        refreshInterval: 1000 * 60,
+    })
 
-  useEffect(() => {
-    fetch("http://localhost:3000/api/product")
-      .then((response) => response.json())
-      .then((data) => setData(data))
-      .catch((error) => console.error("Error:", error));
-  }, []);
+    if (!data) {
+        return (
+            <div className="flex">
+                <h1 className={title()}>Loading products... <Spinner /></h1>
+            </div>
+        );
+    }
 
-  // If data is still null, render a loading message
-  if (data === null) {
     return (
-      <div className="flex">
-        <h1 className={title()}>Loading products...</h1>
-      </div>
+        <>
+            <h1 className={title()}>Shop</h1>
+
+            <Spacer y={10} />
+
+            <ProductList products={data} />
+        </>
     );
-  }
-
-  // Otherwise, render the data
-  return (
-    <>
-      <h1 className={title()}>Shop</h1>
-
-      <Spacer y={40} />
-
-      <ProductList products={data} />
-    </>
-  );
 }

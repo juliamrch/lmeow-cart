@@ -101,7 +101,7 @@ export const Navbar = () => {
 
 
                     <div className="flex gap-3">
-                    <Link href="/checkout" passHref>
+                    <Link href="/checkout">
                         <Button >Cart</Button>
                         </Link>
                     </div>

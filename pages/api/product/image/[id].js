@@ -1,4 +1,4 @@
-import { connectToDB,Binary } from '@/lib/mongodb';
+import { connectToDB, Binary } from '@/lib/mongodb';
 import path from 'path';
 import fs from 'fs';
 
@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     const products = db.collection('products');
     const product = await read(products, id)
 
-    if (!product.imageMime || !product.image) {
+    if (!product || !product.imageMime || !product.image) {
         const filePath = path.join(process.cwd(), 'public', 'product', 'placeholder.png');
         const img = fs.readFileSync(filePath);
 

@@ -2,42 +2,51 @@
 
 import React, { useEffect, useState } from "react";
 import { title, subtitle } from "@/components/primitives";
-import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import { Spacer } from "@nextui-org/react";
 import { sendTrx } from '@/lib/wallet';
 import ProductList from "@/components/product-list";
+import useSWR from "swr";
+
+const API_URL_CART = process.env.NEXT_PUBLIC_API_ENDPOINT + '/cart'
 
 export default function ShopPage() {
-    const [data, setData] = useState(null);
     const [totalAmount, setTotalAmount] = useState(0);
+    const [products, setProducts] = useState([]);
+
+    const fetcher = (url) => fetch(url).then((res) => res.json());
+    const { data, error: cartLoadingError } = useSWR(API_URL_CART, fetcher, {
+        refreshInterval: 1000 * 60,
+    })
 
     useEffect(() => {
-        fetch("http://localhost:3000/api/cart")
-            .then((response) => response.json())
-            .then((data) => {
-                const productIds = Object.keys(data)
-                const products = []
-                let total = 0
-                for (let i = 0,cnt = productIds.length; i < cnt; ++i) {
-                    const product = data[productIds[i]]
+        if (!data || !data.status) {
+            return
+        }
+        const productIds = Object.keys(data)
+        if (productIds.length === 0) {
+            return
+        }
 
-                    products.push(product)
+        const cartProducts = []
+        let total = 0
+        for (let i = 0, cnt = productIds.length; i < cnt; ++i) {
+            const product = data[productIds[i]]
 
-                    total += +product.price
-                }
+            cartProducts.push(product)
 
-                setData(products)
-                setTotalAmount(total)
-            })
-            .catch((error) => console.error("Error:", error));
-    }, []);
+            total += +product.price
+        }
+
+        setProducts(cartProducts)
+        setTotalAmount(total)
+    }, [data]);
 
     async function buy() {
         sendTrx(totalAmount)
     }
 
-    // If data is still null, render a loading message
-    if (data === null || data.length === 0) {
+    if (products.length === 0) {
         return (
             <div className="flex">
                 <h1 className={title()}>There are no products in your cart yet.</h1>
@@ -48,14 +57,13 @@ export default function ShopPage() {
         );
     }
 
-    // Otherwise, render the data
     return (
         <>
             <h1 className={title()}>Checkout</h1>
 
-            <Spacer y={40} />
+            <Spacer y={10} />
 
-            <ProductList products={data} />
+            <ProductList products={products} />
 
             <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
                 <div>Total: {totalAmount}</div>
