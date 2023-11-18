@@ -9,6 +9,7 @@ async function update(products, id, obj) {
         { id },
         {
             $set: {
+                updatedAt: new Date(),
                 name: obj.name,
                 price: obj.price,
                 category: obj.category,
@@ -23,7 +24,7 @@ export default async function handler(req, res) {
     const id = +req.query.id
 
     if (['GET', 'POST'].indexOf(req.method) === -1) {
-        res.status(400).json({ error: 'Invalid method' });
+        res.status(405).json({ error: 'Invalid method' });
     }
 
     const db = await connectToDB();
