@@ -12,7 +12,7 @@ interface Product {
   // add other properties if needed
 }
 
-export default function ShopPage() {
+export default function PublicShopPage() {
   const [data, setData] = useState(null);
 
   useEffect(() => {
@@ -26,10 +26,7 @@ export default function ShopPage() {
   if (data === null) {
     return (
       <div className="flex">
-        <h1 className={title()}>There are no products in this store yet.</h1>
-        <h2 className={subtitle({ class: "mt-4" })}>
-          Connect wallet and start adding some if you are the admin. Come back later if you are not.
-        </h2>
+        <h1 className={title()}>Loading products...</h1>
       </div>
     );
   }
