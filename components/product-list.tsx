@@ -30,12 +30,12 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [data, setData] = useState<Product[]>(products);
 
-  useEffect(() => {
-    fetch("http://localhost:3000/api/product")
+  async function buy(id:Number) {
+    fetch("http://localhost:3000/api/cart/" + id, {method: 'PUT'})
       .then((response) => response.json())
-      .then((data) => setData(data))
+      .then((data) => alert(data.success ? true : data.error))
       .catch((error) => console.error("Error:", error));
-  }, []);
+  }
 
   // If data is still null, render a loading message
   if (data === null) {
@@ -67,14 +67,12 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
                 <div>
                   <p className="text-black font-bold">{product.price} ETH</p>
                 </div>
-                <Button className="text-tiny" color="primary" radius="full" size="sm">
+                <Button className="text-tiny" color="primary" radius="full" size="sm" onClick={() => {buy(product.id)}}>
                   Buy
                 </Button>
                 <Button onPress={onOpen}>Description</Button>
                 <Modal isOpen={isOpen} onOpenChange={onOpen}>
                   <ModalContent>
-                    {(onClose) => (
-                      <>
                         <ModalHeader className="flex flex-col gap-1">{product.name}</ModalHeader>
                         <ModalBody>
                           <p>{product.description}</p>
@@ -83,12 +81,10 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
                           <Button color="danger" variant="light" onPress={onClose}>
                             Close
                           </Button>
-                          <Button color="primary" onPress={onClose}>
-                            Action
+                          <Button color="primary" onClick={() => {buy(product.id)}}>
+                            Buy
                           </Button>
                         </ModalFooter>
-                      </>
-                    )}
                   </ModalContent>
                 </Modal>
               </CardFooter>

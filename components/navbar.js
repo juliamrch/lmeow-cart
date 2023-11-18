@@ -101,6 +101,16 @@ export const Navbar = () => {
 
 
                     <div className="flex gap-3">
+                    <Link href="/checkout" passHref>
+                        <Button >Cart</Button>
+                        </Link>
+                    </div>
+
+                </NavbarItem>
+                <NavbarItem className="hidden md:flex">
+
+
+                    <div className="flex gap-3">
                         <WalletButton />
                     </div>
 

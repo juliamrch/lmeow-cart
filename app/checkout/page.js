@@ -5,6 +5,7 @@ import { title, subtitle } from "@/components/primitives";
 import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react";
 import { Spacer } from "@nextui-org/react";
 import { sendTrx } from '@/lib/wallet';
+import ProductList from "@/components/product-list";
 
 export default function ShopPage() {
     const [data, setData] = useState(null);
@@ -54,17 +55,9 @@ export default function ShopPage() {
 
             <Spacer y={40} />
 
+            <ProductList products={data} />
+
             <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
-                {data.map((product, index) => (
-                    <div key={index}>
-                        <Card shadow="sm" isPressable onPress={() => console.log("item pressed")}>
-                            <CardFooter className="text-small justify-between">
-                                <b>{product.name}</b>
-                                <p className="text-default-500">Price {product.price} x {product.quantity}</p>
-                            </CardFooter>
-                        </Card>
-                    </div>
-                ))}
                 <div>Total: {totalAmount}</div>
                 <div><Button onClick={buy}>Pay</Button></div>
             </div>
