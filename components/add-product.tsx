@@ -38,10 +38,7 @@ export default function AddProduct() {
     console.log(product); // Log the product object
 
     const formData = new FormData(formRef.current);
-    console.log('form',formData)
-    for (let [key, value] of formData.entries()) {
-        console.log(key, value);
-      }
+
     const response = await fetch("http://localhost:3000/api/product", {
       method: "PUT",
       body: formData,

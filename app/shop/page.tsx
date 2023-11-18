@@ -1,19 +1,35 @@
 "use client";
+import ProductList from "@/components/product-list";
 
 import React, { useEffect, useState } from "react";
-import { title, subtitle } from "@/components/primitives";
-import { Card, CardBody, CardFooter, Image } from "@nextui-org/react";
+import { title } from "@/components/primitives";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
+  Image,
+  Button,
+  useDisclosure,
+} from "@nextui-org/react";
 import { Spacer } from "@nextui-org/react";
 
 interface Product {
-  id: number;
   name: string;
   price: number;
-  // add other properties if needed
+  image: string;
+  id: number;
+  description: string;
 }
 
-export default function PublicShopPage() {
-  const [data, setData] = useState(null);
+export default function ShopPage() {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure(); // Destructure onOpenChange here
+  const [data, setData] = useState<Product[] | null>(null);
 
   useEffect(() => {
     fetch("http://localhost:3000/api/product")
@@ -38,28 +54,7 @@ export default function PublicShopPage() {
 
       <Spacer y={40} />
 
-      <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
-        {data.map((product: Product, index: number) => (
-          <div key={index}>
-            <Card shadow="sm" isPressable onPress={() => console.log("item pressed")}>
-              <CardBody className="overflow-visible p-0">
-                <Image
-                  shadow="sm"
-                  radius="lg"
-                  width="100%"
-                  alt={product.name}
-                  className="w-full object-cover h-[140px]"
-                  src={product.image}
-                />
-              </CardBody>
-              <CardFooter className="text-small justify-between">
-                <b>{product.name}</b>
-                <p className="text-default-500">{product.price}</p>
-              </CardFooter>
-            </Card>
-          </div>
-        ))}
-      </div>
+      <ProductList products={data} />
     </>
   );
 }
