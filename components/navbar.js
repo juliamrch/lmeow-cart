@@ -29,17 +29,9 @@ import {
 } from "@/components/icons";
 import { button as buttonStyles } from "@nextui-org/theme";
 import { Logo } from "@/components/icons";
-import { connectWallet, disconnectWallet } from '@/lib/wallet';
+import { WalletButton } from '@/components/wallet-button'
 
 export const Navbar = () => {
-    async function connect() {
-        try {
-            await connectWallet()
-        } catch (e) {
-            console.debug(e.message)
-        }
-    }
-
     const searchInput = (
         <Input
             aria-label="Search"
@@ -109,12 +101,7 @@ export const Navbar = () => {
 
 
                     <div className="flex gap-3">
-                        <Button
-                            onClick={connect}
-                            className={buttonStyles({ color: "secondary", radius: "full", variant: "shadow" })}
-                        >
-                            Connect Wallet
-                        </Button>
+                        <WalletButton />
                     </div>
 
                 </NavbarItem>

@@ -18,8 +18,8 @@ export default async function handler(req, res) {
     const user = await users.findOne({ address: token.address })
 
     if (!user) {
-        return res.json({ user: null });
+        return res.json(null);
     }
 
-    return res.json({ user });
+    return res.json(user);
 };

@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useState, useRef } from "react";
-import { Card, CardHeader, CardBody, CardFooter, Divider, Link, Image } from "@nextui-org/react";
+import { Card, CardHeader, CardBody, CardFooter, Divider, Link, Image, Textarea } from "@nextui-org/react";
 import { title, subtitle } from "@/components/primitives";
 import { Spacer, Input, Button } from "@nextui-org/react";
 import {} from "@nextui-org/react";
@@ -7,6 +7,7 @@ import {} from "@nextui-org/react";
 export default function AddProduct() {
     const formRef = useRef(null);
   const [name, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [price, setPrice] = useState(0);
   const [stock, setStock] = useState(0);
@@ -76,6 +77,14 @@ export default function AddProduct() {
               labelPlacement="outside"
               value={name.toString()}
               onChange={(e) => setTitle(e.target.value)}
+            />
+            <Textarea
+              type="text"
+              label="Description"
+              name="description"
+              labelPlacement="outside"
+              value={description.toString()}
+              onChange={(e) => setDescription(e.target.value)}
             />
             <Spacer y={6} />
             <Input

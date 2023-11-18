@@ -17,12 +17,16 @@ export default async function handler(req, res) {
     const db = await connectToDB();
     const config = db.collection('config');
 
-    const isShopSetup = await config.findOne({ key: CONFIG_IS_SHOP_SETUP })
-    if (isShopSetup && isShopSetup.value === true) {
-        return res.status(401).json({ success: false, message: "Shop has already been setup." });
-    }
+    // const isShopSetup = await config.findOne({ key: CONFIG_IS_SHOP_SETUP })
+    // if (isShopSetup && isShopSetup.value === true) {
+    //     return res.status(401).json({ success: false, message: "Shop has already been setup." });
+    // }
 
     const users = db.collection('users');
+    const user = await users.findOne({ isAdmin: true })
+    if (user) {
+        return res.status(401).json({ success: false, message: "Shop has already been setup." });
+    }
 
     try {
         await users.updateOne(

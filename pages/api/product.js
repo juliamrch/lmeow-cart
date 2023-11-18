@@ -17,6 +17,7 @@ async function insert(products, obj) {
         updatedAt: new Date(),
         image: obj.image,
         imageMime: obj.imageMime,
+        description: obj.description[0],
         name: obj.name[0],
         price: obj.price[0],
         category: obj.category[0],
@@ -72,7 +73,7 @@ export default async function handler(req, res) {
 
                 console.log(fields, files)
 
-                if (!fields.name || !fields.price || !fields.stock || !fields.weight || !fields.category) {
+                if (!fields.name || !fields.description || !fields.price || !fields.stock || !fields.weight || !fields.category) {
                     res.status(400).json({ error: 'Missing product data' });
                     return;
                 }
