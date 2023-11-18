@@ -2,7 +2,7 @@ import { connectToDB } from '@/lib/mongodb';
 import { isAdmin } from '@/lib/verifyJWT';
 
 async function read(products, id) {
-    return await products.findOne({ id })
+    return await products.findOne({ id }, { projection: { image: 0 } })
 }
 
 async function update(products, id, obj) {
@@ -28,10 +28,6 @@ export default async function handler(req, res) {
         res.status(405).json({ error: 'Invalid method' });
     }
 
-    if (isAdmin(req.cookies?.userToken) !== true) {
-        return res.status(401).json({ error: 'No access.' });
-    }
-
     const db = await connectToDB();
     const products = db.collection('products');
 
@@ -47,6 +43,10 @@ export default async function handler(req, res) {
             break
         case 'POST':
             try {
+                if (isAdmin(req.cookies?.userToken) !== true) {
+                    return res.status(401).json({ error: 'No access.' });
+                }
+
                 const { name, price, category, stock, weight } = req.body
 
                 await update(products, id, { name, price, category, stock, weight })

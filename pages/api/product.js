@@ -5,7 +5,7 @@ import fs from 'fs';
 import { isAdmin } from '@/lib/verifyJWT';
 
 async function read(products, skip, limit) {
-    return await products.find().skip(skip).limit(limit).toArray()
+    return await products.find().project({ image: 0 }).skip(skip).limit(limit).toArray()
 }
 
 async function insert(products, obj) {
@@ -15,11 +15,13 @@ async function insert(products, obj) {
         id,
         createdAt: new Date(),
         updatedAt: new Date(),
-        name: obj.name,
-        price: obj.price,
-        category: obj.category,
-        stock: obj.stock,
-        weight: obj.weight,
+        image: obj.image,
+        imageMime: obj.imageMime,
+        name: obj.name[0],
+        price: obj.price[0],
+        category: obj.category[0],
+        stock: obj.stock[0],
+        weight: obj.weight[0],
     });
 
     return id
@@ -54,7 +56,8 @@ export default async function handler(req, res) {
             }
             break
         case 'PUT':
-            if (isAdmin(req.cookies?.userToken) !== true) {
+            const isUserAdmin = await isAdmin(req.cookies?.userToken)
+            if (isUserAdmin !== true) {
                 return res.status(401).json({ error: 'No access.' });
             }
 
@@ -74,7 +77,7 @@ export default async function handler(req, res) {
                     return;
                 }
 
-                const file = data.files.file;
+                const file = files.image[0];
                 if (!file.mimetype.startsWith('image/')) {
                     res.status(400).json({ error: 'Invalid file type' });
                     return;
@@ -84,6 +87,7 @@ export default async function handler(req, res) {
                 const image = new Binary(img);
 
                 fields.image = image
+                fields.imageMime = file.mimetype
 
                 const id = await insert(productsCollection, fields)
 
