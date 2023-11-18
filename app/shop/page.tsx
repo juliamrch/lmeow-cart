@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import { title, subtitle } from "@/components/primitives";
+import { Card, CardBody, CardFooter, Image } from "@nextui-org/react";
+import { Spacer } from "@nextui-org/react";
 
 interface Product {
   id: number;
@@ -23,7 +25,7 @@ export default function ShopPage() {
   // If data is still null, render a loading message
   if (data === null) {
     return (
-      <div>
+      <div className="flex">
         <h1 className={title()}>There are no products in this store yet.</h1>
         <h2 className={subtitle({ class: "mt-4" })}>
           Connect wallet and start adding some if you are the admin. Come back later if you are not.
@@ -34,14 +36,33 @@ export default function ShopPage() {
 
   // Otherwise, render the data
   return (
-    <div>
+    <>
       <h1 className={title()}>Shop</h1>
-      {data.map((product) => (
-        <div key={product.id}>
-          <h2>{product.name}</h2>
-          <p>{product.price}</p>
-        </div>
-      ))}
-    </div>
+
+      <Spacer y={40} />
+
+      <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
+        {data.map((product: Product, index: number) => (
+          <div key={index}>
+            <Card shadow="sm" isPressable onPress={() => console.log("item pressed")}>
+              <CardBody className="overflow-visible p-0">
+                <Image
+                  shadow="sm"
+                  radius="lg"
+                  width="100%"
+                  alt={product.name}
+                  className="w-full object-cover h-[140px]"
+                  src={product.image}
+                />
+              </CardBody>
+              <CardFooter className="text-small justify-between">
+                <b>{product.name}</b>
+                <p className="text-default-500">{product.price}</p>
+              </CardFooter>
+            </Card>
+          </div>
+        ))}
+      </div>
+    </>
   );
 }
