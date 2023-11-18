@@ -1,18 +1,20 @@
 "use client";
 
 import { title } from "@/components/primitives";
-import SideNav from '@/components/sidenav';
-import { useRouter } from 'next/navigation';
+import AddProduct from "@/components/add-product"
+import Product from "@/components/product"
+import {Spacer} from "@nextui-org/react";
 
 
-export default function ProductsLayout({ children }: { children: React.ReactNode }) {
+export default function Products({ children }: { children: React.ReactNode }) {
   
 	return (
       
       <div>
         <h1 className={title()}>Products</h1>
+        <Spacer y={10} />
+        <AddProduct />
+    
       </div>
-
-
 	);
 }

@@ -1,13 +1,14 @@
 import React from "react";
 import {Card, CardBody, CardFooter, Image} from "@nextui-org/react";
 
-export default function App() {
+export default function Product() {
   const list = [
     {
       title: "Orange",
       img: "/images/fruit-1.jpeg",
       price: "$5.50",
     },
+  ]
     
   return (
     <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
