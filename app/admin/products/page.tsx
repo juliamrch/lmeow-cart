@@ -7,7 +7,7 @@ import {Spacer,Spinner} from "@nextui-org/react";
 import { useEffect, useState } from "react";
 
 
-export default function Products({ children }: { children: React.ReactNode }) {
+export default function BasicPage() {
     const [loading, setLoading] = useState(true)
 
     async function initState() {
@@ -19,9 +19,11 @@ export default function Products({ children }: { children: React.ReactNode }) {
                 return setLoading(false)
             }
 
-            window.location = '/shop'
+            window.location.href = '/shop'
         } catch (e) {
+            if (e instanceof Error) {
             console.debug('failed getting logged', e.message)
+            }
         }
     }
 

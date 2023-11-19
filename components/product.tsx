@@ -19,13 +19,13 @@ export default function Product() {
               shadow="sm"
               radius="lg"
               width="100%"
-              alt={product.name}
+              alt={product.title}
               className="w-full object-cover h-[140px]"
-              src={product.image}
+              src={product.img}
             />
           </CardBody>
           <CardFooter className="text-small justify-between">
-            <b>{product.name}</b>
+            <b>{product.title}</b>
             <p className="text-default-500">{product.price}</p>
           </CardFooter>
           <Button color="secondary">Buy</Button>

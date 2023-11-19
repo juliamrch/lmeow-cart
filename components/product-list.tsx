@@ -32,7 +32,7 @@ const ProductList: React.FC<ProductListProps> = ({ products, showAdd, showRemove
     const [currentProduct, setCurrentProduct] = useState<Product | null>(null)
 
     function selectCurrentProduct(id: Number) {
-        const product = products.find((v) => v.id === id)
+        const product = products.find((v) => v.id === id) || null;
 
         setCurrentProduct(product)
     }
@@ -85,18 +85,18 @@ const ProductList: React.FC<ProductListProps> = ({ products, showAdd, showRemove
                                     <ModalContent>
                                         {(onClose) => (
                                             <>
-                                                <ModalHeader className="flex flex-col gap-1">{currentProduct.name}</ModalHeader>
+                                                <ModalHeader className="flex flex-col gap-1">{currentProduct?.name}</ModalHeader>
                                                 <ModalBody>
-                                                    <p>{currentProduct.description}</p>
+                                                    <p>{currentProduct?.description}</p>
                                                 </ModalBody>
                                                 <ModalFooter>
                                                     <Button color="danger" variant="light" onPress={onClose}>
                                                         Close
                                                     </Button>
-                                                    {showAdd && <Button color="primary" onClick={() => { buy(currentProduct.id) }}>
+                                                    {showAdd && currentProduct && <Button color="primary" onClick={() => { buy(currentProduct.id) }}>
                                                         Buy
                                                     </Button>}
-                                                    {showRemove && <Button className="text-tiny" color="danger" radius="full" size="sm" onClick={() => { remove(currentProduct.id) }}>
+                                                    {showRemove && currentProduct && <Button className="text-tiny" color="danger" radius="full" size="sm" onClick={() => { remove(currentProduct.id) }}>
                                                         Remove
                                                     </Button>}
                                                 </ModalFooter>

@@ -6,7 +6,19 @@ import { useEffect, useState } from "react";
 import useSWR from 'swr';
 import ProductList from "@/components/product-list";
 
-export default function Orders({ children }: { children: React.ReactNode }) {
+interface Order {
+        createdAt: string;
+        updatedAt: string;
+        user: string;
+        trxHash: string;
+        receipt: { status: number };
+        shippingAddress: string;
+        totalAmount: number;
+        totalTransacted: number;
+        cart: { [key: string]: any };
+        }
+
+export default function BasicPage() {
     const [loading, setLoading] = useState(true)
 
     const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -23,9 +35,11 @@ export default function Orders({ children }: { children: React.ReactNode }) {
                 return setLoading(false)
             }
 
-            window.location = '/shop'
+            window.location.href = '/shop'
         } catch (e) {
-            console.debug('failed getting logged', e.message)
+            if (e instanceof Error) {
+                console.debug('failed getting logged', e.message)
+            }
         }
     }
 
@@ -47,7 +61,7 @@ export default function Orders({ children }: { children: React.ReactNode }) {
 
             <Spacer y={10} />
 
-            {data.map((order, index: number) => (
+            {data.map((order: Order, index: number) => (
                 <div key={index}>
                     <h5>{order.createdAt} / {order.updatedAt}</h5>
                     <h5>User {order.user}</h5>
@@ -56,7 +70,7 @@ export default function Orders({ children }: { children: React.ReactNode }) {
                     <h5>Shipping {order.shippingAddress}</h5>
                     <h5>Order Amount {order.totalAmount}</h5>
                     <h5>Transacted {order.totalTransacted}</h5>
-                    <ProductList products={Object.keys(order.cart).reduce((all, v) => { all.push(order.cart[v]); return all }, [])} showAdd={false} showRemove={false} />
+                    <ProductList products={Object.keys(order.cart).reduce((all: any[], v) => { all.push(order.cart[v]); return all }, [])} showAdd={false} showRemove={false} />
                 </div>
             ))}
         </div>

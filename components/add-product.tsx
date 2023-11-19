@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useState, useRef } from "react";
-import { Card, CardHeader, CardBody, CardFooter, Divider, Link, Image, Textarea } from "@nextui-org/react";
+import { Card, CardHeader, CardBody, CardFooter, Divider, Link, Image as NextImage, Textarea } from "@nextui-org/react";
 import { title, subtitle } from "@/components/primitives";
 import { Spacer, Input, Button } from "@nextui-org/react";
 import {} from "@nextui-org/react";
@@ -47,24 +47,26 @@ export default function AddProduct() {
     const product = { title, price, stock, weight, category, image };
     console.log(product); // Log the product object
 
-    const formData = new FormData(formRef.current);
+    if (formRef.current) {
+      const formData = new FormData(formRef.current);
 
-    const response = await fetch("http://localhost:3000/api/product", {
-      method: "PUT",
-      body: formData,
-    });
+      const response = await fetch("http://localhost:3000/api/product", {
+        method: "PUT",
+        body: formData,
+      });
 
-    if (!response.ok) {
-      // Handle error
-      console.error("Failed to update product");
-      alert("Failed to update product");
-      const errorMessage = await response.text(); // Get the error message from the server
-      console.error(errorMessage); // Log the error message
-    } else {
-        clearProduct()
-      const data = await response.json()
-      console.log("Product updated successfully",data);
-      alert(`Product updated successfully: ${data.id}`);
+      if (!response.ok) {
+        // Handle error
+        console.error("Failed to update product");
+        alert("Failed to update product");
+        const errorMessage = await response.text(); // Get the error message from the server
+        console.error(errorMessage); // Log the error message
+      } else {
+          clearProduct()
+        const data = await response.json()
+        console.log("Product updated successfully",data);
+        alert(`Product updated successfully: ${data.id}`);
+      }
     }
   };
 
@@ -144,7 +146,7 @@ export default function AddProduct() {
                 style={{ display: "none" }}
               />
               <button onClick={handleClick}>Upload Image</button>
-              {image && <img src={image} alt="preview" />}
+              {image && <NextImage src={image} alt="preview" width={500} height={300} />}
             </div>
 
             <Spacer y={6} />
@@ -156,5 +158,6 @@ export default function AddProduct() {
         </div>
       </div>
     </>
+
   );
 }

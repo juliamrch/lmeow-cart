@@ -1,10 +1,10 @@
 "use client";
 
+import React, { useEffect, useState } from 'react';
 import { title } from "@/components/primitives";
 import { Spacer, Spinner } from "@nextui-org/react";
-import { useEffect, useState } from "react";
 
-export default function Customers({ children }: { children: React.ReactNode }) {
+export default function BasicPage() {
     const [loading, setLoading] = useState(true)
 
     async function initState() {
@@ -16,9 +16,11 @@ export default function Customers({ children }: { children: React.ReactNode }) {
                 return setLoading(false)
             }
 
-            window.location = '/shop'
+            window.location.href= '/shop'
         } catch (e) {
-            console.debug('failed getting logged', e.message)
+          if (e instanceof Error) {
+            console.debug('failed getting logged', e.message);
+          }
         }
     }
 
@@ -38,6 +40,7 @@ export default function Customers({ children }: { children: React.ReactNode }) {
         <div>
             <h1 className={title()}>Customers</h1>
             <Spacer y={10} />
+            
         </div>
     );
 }
