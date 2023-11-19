@@ -63,6 +63,7 @@ export default function MyOrders({ children }: { children: React.ReactNode }) {
                     <h5>Shipping {order.shippingAddress}</h5>
                     <h5>Order Amount {order.totalAmount}</h5>
                     <h5>Transacted {order.totalTransacted}</h5>
+                    <h5>Is Shipped {order.shipped ? 'Yes' : 'No'}</h5>
                     <ProductList products={Object.keys(order.cart).reduce((all, v) => { all.push(order.cart[v]); return all }, [])} showAdd={false} showRemove={false} />
                 </div>
             ))}

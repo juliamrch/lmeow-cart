@@ -49,7 +49,7 @@ export default async function handler(req, res) {
             try {
                 const order = await read(ordersCollection, id)
 
-                if (!order || order.user !== user.address) {
+                if (!order || (order.user !== user.address && !user.isAdmin)) {
                     res.status(400).json({ success: false, error: 'Error reading order' });
                     return
                 }
@@ -61,13 +61,18 @@ export default async function handler(req, res) {
             }
             break
         case 'POST':
+            if (user.isAdmin === false) {
+                res.status(401).json({ success: false, error: 'No access' });
+                return
+            }
+
             try {
-                await update(orders, id)
+                await update(ordersCollection, id)
 
                 res.json({ success: true });
             } catch (e) {
                 console.debug(e)
-                res.status(400).json({ success: false, error: 'Error updating order' });
+                res.status(400).json({ success: false, error: 'Error updating order'+e.message });
             }
             break
     }

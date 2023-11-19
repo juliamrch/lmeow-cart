@@ -1,7 +1,7 @@
 "use client";
 
 import { title } from "@/components/primitives";
-import { Spacer, Spinner } from "@nextui-org/react";
+import { Button, Spacer, Spinner } from "@nextui-org/react";
 import { useContext, useEffect, useState } from "react";
 import useSWR from 'swr';
 import ProductList from "@/components/product-list";
@@ -38,6 +38,18 @@ export default function Orders({ children }: { children: React.ReactNode }) {
         setProducts(data)
     }, [data]);
 
+    async function ship(id) {
+        const orderRaw = await fetch(process.env.NEXT_PUBLIC_API_ENDPOINT + '/order/' + id, {
+            method: 'POST'
+        })
+
+        const order = await orderRaw.json()
+
+        console.debug(order)
+
+        alert(`order id ${order.success}`)
+    }
+
     if (loading) {
         return (
             <div className="flex">
@@ -58,9 +70,11 @@ export default function Orders({ children }: { children: React.ReactNode }) {
                     <h5>User {order.user}</h5>
                     <h5>Hash {order.trxHash}</h5>
                     <h5>Status {order.receipt ? (order.receipt.status === 1 ? 'Success' : 'Fail') : 'Unknown'}</h5>
-                    <h5>Shipping {order.shippingAddress}</h5>
+                    <h5>Shipping Address {order.shippingAddress}</h5>
                     <h5>Order Amount {order.totalAmount}</h5>
                     <h5>Transacted {order.totalTransacted}</h5>
+                    <h5>Is Shipped {order.shipped ? 'Yes' : 'No'}</h5>
+                    {!order.shipped && <Button onClick={() => { ship(order.id) }}>Ship</Button>}
                     <ProductList products={Object.keys(order.cart).reduce((all, v) => { all.push(order.cart[v]); return all }, [])} showAdd={false} showRemove={false} />
                 </div>
             ))}
