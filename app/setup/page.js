@@ -9,9 +9,11 @@ import { siteConfig } from "@/config/site";
 import { title, subtitle } from "@/components/primitives";
 import { GithubIcon } from "@/components/icons";
 import { WalletButton } from '@/components/wallet-button'
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import SharedAppDataContext from '@/lib/sharedAppDataContext';
 
 export default function SetUp() {
+    const { sharedData, setSharedData } = useContext(SharedAppDataContext);
     const [isUserLogged, setIsUserLogged] = useState(false);
     const [isAdminSetup, setIsAdminSetup] = useState(false);
     const [isUserAdmin, setIsUserAdmin] = useState(false);
@@ -46,8 +48,8 @@ export default function SetUp() {
             const loggedRaw = await fetch(process.env.NEXT_PUBLIC_API_ENDPOINT + '/loggedUser')
             const logged = await loggedRaw.json()
 
-            setIsUserLogged(logged.hasSigned === true)
-            setIsUserAdmin(logged.isAdmin === true)
+            setIsUserLogged(logged && logged.hasSigned === true)
+            setIsUserAdmin(logged && logged.isAdmin === true)
         } catch (e) {
             console.debug('failed getting logged', e.message)
         }
@@ -56,6 +58,11 @@ export default function SetUp() {
     useEffect(() => {
         initState()
     }, [])
+
+    useEffect(() => {
+        setIsUserLogged(sharedData.loggedUser && sharedData.loggedUser.hasSigned === true)
+        setIsUserAdmin(sharedData.loggedUser && sharedData.loggedUser.isAdmin === true)
+    }, [sharedData.loggedUser])
 
     return (
         <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
