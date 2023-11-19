@@ -30,13 +30,25 @@ import {
 import { button as buttonStyles } from "@nextui-org/theme";
 import { Logo } from "@/components/icons";
 import { connectWallet, disconnectWallet } from '@/lib/wallet';
+import { useState } from 'react';
 
 export const Navbar = () => {
+    const [isConnected, setIsConnected] = useState(false);
     async function connect() {
         try {
-            await connectWallet()
+            await connectWallet();
+            console.log("Connected");
         } catch (e) {
-            console.debug(e.message)
+            console.debug(e.message);
+        }
+    }
+    async function disconnect() {
+        try {
+            await disconnectWallet();
+            setIsConnected(false);
+            console.log("Disconnected");
+        } catch (e) {
+            console.debug(e.message);
         }
     }
 
@@ -109,12 +121,14 @@ export const Navbar = () => {
 
 
                     <div className="flex gap-3">
-                        <Button
+                        <button
                             onClick={connect}
-                            className={buttonStyles({ color: "secondary", radius: "full", variant: "shadow" })}
+                            className={buttonStyles({ 
+                                color: "secondary",
+                                variant: "bordered" })}
                         >
-                            Connect Wallet
-                        </Button>
+                            {isConnected ? 'Disconnect Wallet' : 'Connect Wallet'}
+                        </button>
                     </div>
 
                 </NavbarItem>

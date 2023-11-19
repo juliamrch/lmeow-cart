@@ -45,7 +45,11 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
       </div>
     );
   }
-
+  // Log an error message and the value of data if it's not an array,
+  if (!Array.isArray(data)) {
+    console.error('Data is not an array:', data);
+    return null;
+  }
   // Otherwise, render the data
   return (
     <>

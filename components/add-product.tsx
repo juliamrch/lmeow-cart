@@ -1,8 +1,12 @@
 import React, { ChangeEvent, useState, useRef } from "react";
-import { Card, CardHeader, CardBody, CardFooter, Divider, Link, Image } from "@nextui-org/react";
+
 import { title, subtitle } from "@/components/primitives";
 import { Spacer, Input, Button } from "@nextui-org/react";
 import {} from "@nextui-org/react";
+import { CameraIcon } from './CameraIcon.jsx';
+// Automatically optimize images for less bandwith consumption
+import Image from 'next/image';
+
 
 export default function AddProduct() {
     const formRef = useRef(null);
@@ -36,11 +40,13 @@ export default function AddProduct() {
     const product = { title, price, stock, weight, category, image };
     console.log(product); // Log the product object
 
-    const formData = new FormData(formRef.current);
-    console.log('form',formData)
-    for (let [key, value] of formData.entries()) {
+    if (formRef.current) {
+      const formData = new FormData(formRef.current);
+      console.log('form',formData)
+      for (let [key, value] of formData.entries()) {
         console.log(key, value);
       }
+    }
     const response = await fetch("http://localhost:3000/api/product", {
       method: "PUT",
       body: formData,
@@ -89,7 +95,7 @@ export default function AddProduct() {
             <Spacer y={6} />
             <Input
               type="number"
-              label="Price"
+              label="Price in ETH"
               name="price"
               placeholder="0.00"
               labelPlacement="outside"
@@ -102,11 +108,13 @@ export default function AddProduct() {
               type="number"
               label="Stock"
               name="stock"
-              placeholder="0"
+              placeholder="0.00"
               labelPlacement="outside"
               value={stock.toString()}
               onChange={(e) => setStock(parseInt(e.target.value))}
             />
+
+            <Spacer y={6} />
             <Input
               type="number"
               label="Weight"
@@ -119,7 +127,7 @@ export default function AddProduct() {
 
             <Spacer y={6} />
             <div>
-              <Input
+              <input
                 type="file"
                 accept="image/*"
                 name="image"
@@ -127,8 +135,11 @@ export default function AddProduct() {
                 ref={fileInputRef}
                 style={{ display: "none" }}
               />
-              <button onClick={handleClick}>Upload Image</button>
-              {image && <img src={image} alt="preview" />}
+              <Spacer y={6} />
+              <Button onClick={handleClick} color="success" endContent={<CameraIcon />}>
+                Upload Image
+              </Button>
+              {image && <Image src={image} alt="preview" />}
             </div>
 
             <Spacer y={6} />
