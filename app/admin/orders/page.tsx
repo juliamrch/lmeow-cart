@@ -2,36 +2,41 @@
 
 import { title } from "@/components/primitives";
 import { Spacer, Spinner } from "@nextui-org/react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import useSWR from 'swr';
 import ProductList from "@/components/product-list";
+import SharedAppDataContext from '@/lib/sharedAppDataContext';
 
 export default function Orders({ children }: { children: React.ReactNode }) {
+    const { sharedData, setSharedData } = useContext(SharedAppDataContext);
     const [loading, setLoading] = useState(true)
+    const [products, setProducts] = useState([]);
 
     const fetcher = (url: string) => fetch(url).then((res) => res.json());
     const { data, error: loggedAccountError } = useSWR(process.env.NEXT_PUBLIC_API_ENDPOINT + '/order', fetcher, {
         refreshInterval: 1000 * 60,
     })
 
-    async function initState() {
-        try {
-            const loggedRaw = await fetch(process.env.NEXT_PUBLIC_API_ENDPOINT + '/loggedUser')
-            const logged = await loggedRaw.json()
-
-            if (logged.isAdmin === true) {
-                return setLoading(false)
+    useEffect(() => {
+        if (sharedData.userLoaded) {
+            if ((!sharedData.loggedUser || !sharedData.loggedUser.isAdmin)) {
+                window.location = '/shop'
             }
 
-            window.location = '/shop'
-        } catch (e) {
-            console.debug('failed getting logged', e.message)
+            setLoading(false)
         }
-    }
+    }, [sharedData.userLoaded])
 
     useEffect(() => {
-        initState()
-    }, [])
+        if (!data || data.success === false) {
+            return
+        }
+        if (data.length === 0) {
+            return
+        }
+
+        setProducts(data)
+    }, [data]);
 
     if (loading) {
         return (
@@ -47,7 +52,7 @@ export default function Orders({ children }: { children: React.ReactNode }) {
 
             <Spacer y={10} />
 
-            {data.map((order, index: number) => (
+            {products.map((order, index: number) => (
                 <div key={index}>
                     <h5>{order.createdAt} / {order.updatedAt}</h5>
                     <h5>User {order.user}</h5>

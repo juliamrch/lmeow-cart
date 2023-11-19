@@ -3,31 +3,23 @@
 import { title } from "@/components/primitives";
 import AddProduct from "@/components/add-product"
 import Product from "@/components/product"
-import {Spacer,Spinner} from "@nextui-org/react";
-import { useEffect, useState } from "react";
-
+import { Spacer, Spinner } from "@nextui-org/react";
+import { useContext, useEffect, useState } from "react";
+import SharedAppDataContext from '@/lib/sharedAppDataContext';
 
 export default function Products({ children }: { children: React.ReactNode }) {
+    const { sharedData, setSharedData } = useContext(SharedAppDataContext);
     const [loading, setLoading] = useState(true)
 
-    async function initState() {
-        try {
-            const loggedRaw = await fetch(process.env.NEXT_PUBLIC_API_ENDPOINT + '/loggedUser')
-            const logged = await loggedRaw.json()
-
-            if (logged.isAdmin === true) {
-                return setLoading(false)
+    useEffect(() => {
+        if (sharedData.userLoaded) {
+            if ((!sharedData.loggedUser || !sharedData.loggedUser.isAdmin)) {
+                window.location = '/shop'
             }
 
-            window.location = '/shop'
-        } catch (e) {
-            console.debug('failed getting logged', e.message)
+            setLoading(false)
         }
-    }
-
-    useEffect(() => {
-        initState()
-    }, [])
+    }, [sharedData.userLoaded])
 
     if (loading) {
         return (
@@ -36,14 +28,12 @@ export default function Products({ children }: { children: React.ReactNode }) {
             </div>
         );
     }
-  
-	return (
-      
-      <div>
-        <h1 className={title()}>Products</h1>
-        <Spacer y={10} />
-        <AddProduct />
-    
-      </div>
-	);
+
+    return (
+        <div>
+            <h1 className={title()}>Products</h1>
+            <Spacer y={10} />
+            <AddProduct />
+        </div>
+    );
 }

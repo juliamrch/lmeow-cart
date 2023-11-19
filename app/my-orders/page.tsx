@@ -8,6 +8,7 @@ import ProductList from "@/components/product-list";
 
 export default function MyOrders({ children }: { children: React.ReactNode }) {
     const [loading, setLoading] = useState(true)
+    const [products, setProducts] = useState([]);
 
     const fetcher = (url: string) => fetch(url).then((res) => res.json());
     const { data, error: loggedAccountError } = useSWR(process.env.NEXT_PUBLIC_API_ENDPOINT + '/order?self=true', fetcher, {
@@ -19,6 +20,17 @@ export default function MyOrders({ children }: { children: React.ReactNode }) {
             setLoading(false)
         }
     }, [data])
+
+    useEffect(() => {
+        if (!data || data.success === false) {
+            return
+        }
+        if (data.length === 0) {
+            return
+        }
+
+        setProducts(data)
+    }, [data]);
 
     if (loading) {
         return (
@@ -42,7 +54,7 @@ export default function MyOrders({ children }: { children: React.ReactNode }) {
 
             <Spacer y={10} />
 
-            {data.map((order, index: number) => (
+            {products.map((order, index: number) => (
                 <div key={index}>
                     <h5>{order.createdAt} / {order.updatedAt}</h5>
                     <h5>User {order.user}</h5>

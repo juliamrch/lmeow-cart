@@ -30,8 +30,17 @@ import {
 import { button as buttonStyles } from "@nextui-org/theme";
 import { Logo } from "@/components/icons";
 import { WalletButton } from '@/components/wallet-button'
+import SharedAppDataContext from '@/lib/sharedAppDataContext';
+import { useContext, useEffect, useState } from "react";
 
 export const Navbar = () => {
+    const { sharedData, setSharedData } = useContext(SharedAppDataContext);
+    const [isAdmin, setIsAdmin] = useState(false);
+
+    useEffect(() => {
+        setIsAdmin(sharedData.loggedUser && sharedData.loggedUser.isAdmin)
+    }, [sharedData.loggedUser])
+
     const searchInput = (
         <Input
             aria-label="Search"
@@ -63,6 +72,18 @@ export const Navbar = () => {
                     </NextLink>
                 </NavbarBrand>
                 <ul className="hidden lg:flex gap-4 justify-start ml-2">
+                    {isAdmin && <NavbarItem key="admin">
+                            <NextLink
+                                className={clsx(
+                                    linkStyles({ color: "foreground" }),
+                                    "data-[active=true]:text-primary data-[active=true]:font-medium"
+                                )}
+                                color="foreground"
+                                href="/admin/orders"
+                            >
+                                Admin
+                            </NextLink>
+                        </NavbarItem>}
                     {siteConfig.navItems.map((item) => (
                         <NavbarItem key={item.href}>
                             <NextLink
@@ -101,8 +122,8 @@ export const Navbar = () => {
 
 
                     <div className="flex gap-3">
-                    <Link href="/checkout">
-                        <Button >Cart</Button>
+                        <Link href="/checkout">
+                            <Button >Cart</Button>
                         </Link>
                     </div>
 

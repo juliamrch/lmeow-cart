@@ -3,31 +3,40 @@
 import { Button } from "@nextui-org/button";
 import { button as buttonStyles } from "@nextui-org/theme";
 import { connectWallet, disconnectWallet } from '@/lib/wallet';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import SharedAppDataContext from '@/lib/sharedAppDataContext';
 
 export const WalletButton = () => {
+    const { sharedData, setSharedData } = useContext(SharedAppDataContext);
     const [isUserLogged, setIsUserLogged] = useState(false);
 
-    async function initState() {
+    async function refreshWallet() {
         try {
             const loggedRaw = await fetch(process.env.NEXT_PUBLIC_API_ENDPOINT + '/loggedUser')
-            const logged = await loggedRaw.json()
+            const loggedUser = await loggedRaw.json()
 
-            setIsUserLogged(logged.hasSigned === true)
+            setSharedData((data) => {
+                return { ...data, loggedUser, userLoaded: true }
+            })
         } catch (e) {
             console.debug('failed getting logged', e.message)
         }
     }
 
     useEffect(() => {
-        initState()
+        refreshWallet()
     }, [])
+
+    useEffect(() => {
+        setIsUserLogged(sharedData.loggedUser && sharedData.loggedUser.hasSigned === true)
+    }, [sharedData.loggedUser])
 
     async function connect() {
         try {
             const success = await connectWallet()
-
-            window.location.reload()
+            if (success) {
+                refreshWallet()
+            }
         } catch (e) {
             console.debug(e.message)
         }
@@ -36,7 +45,7 @@ export const WalletButton = () => {
     async function disconnect() {
         await disconnectWallet()
 
-        window.location.reload()
+        refreshWallet()
     }
 
     return (
