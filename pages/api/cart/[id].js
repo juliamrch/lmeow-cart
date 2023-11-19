@@ -3,7 +3,7 @@ import { verifyJWT } from '@/lib/verifyJWT';
 
 export default async function handler(req, res) {
     if (['DELETE', 'PUT'].indexOf(req.method) === -1) {
-        res.status(405).json({ error: 'Invalid method' });
+        res.status(405).json({ success: false, error: 'Invalid method' });
     }
 
     let token

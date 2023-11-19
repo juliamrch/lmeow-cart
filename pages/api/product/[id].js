@@ -25,7 +25,7 @@ export default async function handler(req, res) {
     const id = +req.query.id
 
     if (['GET', 'POST'].indexOf(req.method) === -1) {
-        res.status(405).json({ error: 'Invalid method' });
+        res.status(405).json({ success: false, error: 'Invalid method' });
     }
 
     const db = await connectToDB();
@@ -38,13 +38,13 @@ export default async function handler(req, res) {
 
                 res.json(product);
             } catch (e) {
-                res.status(400).json({ error: 'Error reading product' });
+                res.status(400).json({ success: false, error: 'Error reading product' });
             }
             break
         case 'POST':
             try {
                 if (isAdmin(req.cookies?.userToken) !== true) {
-                    return res.status(401).json({ error: 'No access.' });
+                    return res.status(401).json({ success: false, error: 'No access.' });
                 }
 
                 const { name, price, category, stock, weight } = req.body
@@ -53,7 +53,7 @@ export default async function handler(req, res) {
 
                 res.json({ id });
             } catch (e) {
-                res.status(400).json({ error: 'Error updating product' });
+                res.status(400).json({ success: false, error: 'Error updating product' });
             }
             break
     }

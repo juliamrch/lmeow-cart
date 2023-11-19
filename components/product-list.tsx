@@ -38,14 +38,14 @@ const ProductList: React.FC<ProductListProps> = ({ products, showAdd, showRemove
     }
 
     async function buy(id: Number) {
-        fetch("http://localhost:3000/api/cart/" + id, { method: 'PUT' })
+        fetch(process.env.NEXT_PUBLIC_API_ENDPOINT + "/cart/" + id, { method: 'PUT' })
             .then((response) => response.json())
             .then((data) => alert(data.success ? true : data.error))
             .catch((error) => console.error("Error:", error));
     }
 
     async function remove(id: Number) {
-        fetch("http://localhost:3000/api/cart/" + id, { method: 'DELETE' })
+        fetch(process.env.NEXT_PUBLIC_API_ENDPOINT + "/cart/" + id, { method: 'DELETE' })
             .then((response) => response.json())
             .then((data) => alert(data.success ? true : data.error))
             .catch((error) => console.error("Error:", error));

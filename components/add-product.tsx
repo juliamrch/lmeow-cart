@@ -26,8 +26,10 @@ export default function AddProduct() {
   }
 
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
       const file = event.target.files[0];
+      if (!file) {
+        return
+      }
       const reader = new FileReader();
 
       reader.onloadend = () => {
@@ -37,7 +39,6 @@ export default function AddProduct() {
       };
 
       reader.readAsDataURL(file);
-    }
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -49,7 +50,7 @@ export default function AddProduct() {
 
     const formData = new FormData(formRef.current);
 
-    const response = await fetch("http://localhost:3000/api/product", {
+    const response = await fetch(process.env.NEXT_PUBLIC_API_ENDPOINT+"/product", {
       method: "PUT",
       body: formData,
     });
@@ -66,11 +67,6 @@ export default function AddProduct() {
       console.log("Product updated successfully",data);
       alert(`Product updated successfully: ${data.id}`);
     }
-  };
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    event.preventDefault();
-    fileInputRef.current?.click();
   };
 
   return (
@@ -141,9 +137,7 @@ export default function AddProduct() {
                 name="image"
                 onChange={handleImageUpload}
                 ref={fileInputRef}
-                style={{ display: "none" }}
               />
-              <button onClick={handleClick}>Upload Image</button>
               {image && <img src={image} alt="preview" />}
             </div>
 

@@ -36,7 +36,7 @@ export const config = {
 
 export default async function handler(req, res) {
     if (['GET', 'PUT'].indexOf(req.method) === -1) {
-        res.status(405).json({ error: 'Invalid method' });
+        res.status(405).json({ success: false, error: 'Invalid method' });
     }
 
     const db = await connectToDB();
@@ -53,13 +53,13 @@ export default async function handler(req, res) {
                 res.json(products);
             } catch (e) {
                 console.debug(e)
-                res.status(400).json({ error: 'Error reading products' });
+                res.status(400).json({ success: false, error: 'Error reading products' });
             }
             break
         case 'PUT':
             const isUserAdmin = await isAdmin(req.cookies?.userToken)
             if (isUserAdmin !== true) {
-                return res.status(401).json({ error: 'No access.' });
+                return res.status(401).json({ success: false, error: 'No access.' });
             }
 
             try {
@@ -74,13 +74,13 @@ export default async function handler(req, res) {
                 console.log(fields, files)
 
                 if (!fields.name || !fields.description || !fields.price || !fields.stock || !fields.weight || !fields.category) {
-                    res.status(400).json({ error: 'Missing product data' });
+                    res.status(400).json({ success: false, error: 'Missing product data' });
                     return;
                 }
 
                 const file = files.image[0];
                 if (!file.mimetype.startsWith('image/')) {
-                    res.status(400).json({ error: 'Invalid file type' });
+                    res.status(400).json({ success: false, error: 'Invalid file type' });
                     return;
                 }
 
@@ -95,7 +95,7 @@ export default async function handler(req, res) {
                 res.json({ id });
             } catch (e) {
                 console.debug(e)
-                res.status(400).json({ error: 'Failed saving product', error: e.message });
+                res.status(400).json({ success: false, error: 'Failed saving product', error: e.message });
             }
             break
     }

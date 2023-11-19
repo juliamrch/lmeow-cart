@@ -66,7 +66,7 @@ async function insert(orders, obj) {
 
 export default async function handler(req, res) {
     if (['GET', 'PUT'].indexOf(req.method) === -1) {
-        res.status(405).json({ error: 'Invalid method' });
+        res.status(405).json({ success: false, error: 'Invalid method' });
     }
 
     let token
@@ -108,23 +108,23 @@ export default async function handler(req, res) {
                 res.json(order);
             } catch (e) {
                 console.debug(e)
-                res.status(400).json({ error: 'Error reading order' });
+                res.status(400).json({ success: false, error: 'Error reading order' });
             }
             break
         case 'PUT':
             try {
                 if (!user.cart || Object.keys(user.cart).length === 0) {
-                    return res.status(400).json({ error: 'Cart empty' });
+                    return res.status(400).json({ success: false, error: 'Cart empty' });
                 }
                 const { shippingAddress, trxHash, totalAmount } = req.body
                 if (!shippingAddress) {
-                    return res.status(400).json({ error: 'Missing shipping address' });
+                    return res.status(400).json({ success: false, error: 'Missing shipping address' });
                 }
                 if (!trxHash) {
-                    return res.status(400).json({ error: 'Missing trxHash' });
+                    return res.status(400).json({ success: false, error: 'Missing trxHash' });
                 }
                 if (!totalAmount) {
-                    return res.status(400).json({ error: 'Missing totalAmount' });
+                    return res.status(400).json({ success: false, error: 'Missing totalAmount' });
                 }
 
                 const id = await insert(ordersCollection, {

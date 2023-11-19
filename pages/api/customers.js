@@ -7,7 +7,7 @@ async function read(ordersCollection, skip, limit) {
 
 export default async function handler(req, res) {
     if ('GET' !== req.method) {
-        res.status(405).json({ error: 'Invalid method' });
+        res.status(405).json({ success: false, error: 'Invalid method' });
     }
 
     try {
@@ -31,6 +31,6 @@ export default async function handler(req, res) {
         res.json(customers);
     } catch (e) {
         console.debug(e)
-        res.status(400).json({ error: 'Error reading order' });
+        res.status(400).json({ success: false, error: 'Error reading order' });
     }
 }

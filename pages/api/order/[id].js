@@ -1,28 +1,23 @@
-import { connectToDB, getNextSequence } from '@/lib/mongodb';
-import { CONFIG_COUNTERS_ORDERS } from '@/constants/config.js'
+import { connectToDB } from '@/lib/mongodb';
 import { verifyJWT } from '@/lib/verifyJWT';
 
 async function read(orders, id) {
     return await orders.findOne({ id })
 }
 
-async function insert(orders, obj) {
-    const id = await getNextSequence(CONFIG_COUNTERS_ORDERS)
-
-    await orders.insertOne({
+async function update(orders, id) {
+    await orders.updateOne({
         id,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        user: obj.user.address,
-        cart: obj.user.cart,
-        shippingAddress: obj.shippingAddress
+    }, {
+        $set: {
+            updatedAt: new Date(),
+            shipped: true
+        }
     });
-
-    return id
 }
 
 export default async function handler(req, res) {
-    if (['GET', 'PUT', 'POST'].indexOf(req.method) === -1) {
+    if (['GET', 'POST'].indexOf(req.method) === -1) {
         res.status(405).json({ error: 'Invalid method' });
     }
 
@@ -55,14 +50,24 @@ export default async function handler(req, res) {
                 const order = await read(ordersCollection, id)
 
                 if (!order || order.user !== user.address) {
-                    res.status(400).json({ error: 'Error reading order' });
+                    res.status(400).json({ success: false, error: 'Error reading order' });
                     return
                 }
 
                 res.json(order);
             } catch (e) {
                 console.debug(e)
-                res.status(400).json({ error: 'Error reading order' });
+                res.status(400).json({ success: false, error: 'Error reading order' });
+            }
+            break
+        case 'POST':
+            try {
+                await update(orders, id)
+
+                res.json({ success: true });
+            } catch (e) {
+                console.debug(e)
+                res.status(400).json({ success: false, error: 'Error updating order' });
             }
             break
     }
