@@ -22,7 +22,7 @@ async function insert(orders, obj) {
 }
 
 export default async function handler(req, res) {
-    if (['GET', 'PUT'].indexOf(req.method) === -1) {
+    if (['GET', 'PUT', 'POST'].indexOf(req.method) === -1) {
         res.status(405).json({ error: 'Invalid method' });
     }
 
@@ -63,28 +63,6 @@ export default async function handler(req, res) {
             } catch (e) {
                 console.debug(e)
                 res.status(400).json({ error: 'Error reading order' });
-            }
-            break
-        case 'PUT':
-            try {
-                if (Object.keys(user.cart).length === 0) {
-                    return res.status(400).json({ error: 'Cart empty' });
-                }
-                const { shippingAddress } = req.body
-                if (!shippingAddress) {
-                    return res.status(400).json({ error: 'Missing shipping address' });
-                }
-
-                const id = await insert(ordersCollection, {
-                    user: user.address,
-                    cart: user.cart,
-                    shippingAddress
-                })
-
-                res.json({ id });
-            } catch (e) {
-                console.debug(e)
-                res.status(400).json({ error: 'Failed saving order' });
             }
             break
     }

@@ -110,7 +110,7 @@ export default function AddProduct() {
               name="price"
               labelPlacement="outside"
               value={price.toString()}
-              onChange={(e) => setPrice(parseFloat(e.target.value))}
+              onChange={(e) => setPrice(+e.target.value)}
             />
 
             <Spacer y={6} />

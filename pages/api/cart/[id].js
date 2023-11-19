@@ -33,7 +33,7 @@ export default async function handler(req, res) {
     const id = +req.query.id
 
     const producsCollection = db.collection('products');
-    const product = await producsCollection.findOne({ id })
+    const product = await producsCollection.findOne({ id }, { projection: { image: 0 } })
     if (!product) {
         return res.status(401).json({ success: false, message: "Product not found." });
     }

@@ -25,7 +25,7 @@ export default function ShopPage() {
 
             <Spacer y={10} />
 
-            <ProductList products={data} />
+            <ProductList products={data} showAdd={true} showRemove={true} />
         </>
     );
 }

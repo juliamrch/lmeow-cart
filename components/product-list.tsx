@@ -23,9 +23,11 @@ interface Product {
 
 interface ProductListProps {
     products: Product[];
+    showAdd: Boolean;
+    showRemove: Boolean;
 }
 
-const ProductList: React.FC<ProductListProps> = ({ products }) => {
+const ProductList: React.FC<ProductListProps> = ({ products, showAdd, showRemove }) => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [currentProduct, setCurrentProduct] = useState<Product | null>(null)
 
@@ -37,6 +39,13 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
 
     async function buy(id: Number) {
         fetch("http://localhost:3000/api/cart/" + id, { method: 'PUT' })
+            .then((response) => response.json())
+            .then((data) => alert(data.success ? true : data.error))
+            .catch((error) => console.error("Error:", error));
+    }
+
+    async function remove(id: Number) {
+        fetch("http://localhost:3000/api/cart/" + id, { method: 'DELETE' })
             .then((response) => response.json())
             .then((data) => alert(data.success ? true : data.error))
             .catch((error) => console.error("Error:", error));
@@ -56,15 +65,18 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
                                 removeWrapper
                                 className="z-0 w-full h-full scale-125 -translate-y-6 object-cover"
                                 alt={product.name}
-                                src={"api/product/image/" + product.id}
+                                src={process.env.NEXT_PUBLIC_API_ENDPOINT + "/product/image/" + product.id}
                             />
                             <CardFooter className="absolute bg-white/30 bottom-0 border-t-1 border-zinc-100/50 z-10 justify-between">
                                 <div>
                                     <p className="text-black font-bold">{product.price} ETH</p>
                                 </div>
-                                <Button className="text-tiny" color="primary" radius="full" size="sm" onClick={() => { buy(product.id) }}>
+                                {showAdd && <Button className="text-tiny" color="primary" radius="full" size="sm" onClick={() => { buy(product.id) }}>
                                     Buy
-                                </Button>
+                                </Button>}
+                                {showRemove && <Button className="text-tiny" color="danger" radius="full" size="sm" onClick={() => { remove(product.id) }}>
+                                    Remove
+                                </Button>}
                                 <Button onPress={() => {
                                     selectCurrentProduct(product.id)
                                     onOpen()
@@ -81,9 +93,12 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
                                                     <Button color="danger" variant="light" onPress={onClose}>
                                                         Close
                                                     </Button>
-                                                    <Button color="primary" onClick={() => { buy(currentProduct.id) }}>
+                                                    {showAdd && <Button color="primary" onClick={() => { buy(currentProduct.id) }}>
                                                         Buy
-                                                    </Button>
+                                                    </Button>}
+                                                    {showRemove && <Button className="text-tiny" color="danger" radius="full" size="sm" onClick={() => { remove(currentProduct.id) }}>
+                                                        Remove
+                                                    </Button>}
                                                 </ModalFooter>
                                             </>
                                         )}

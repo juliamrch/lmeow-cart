@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { title, subtitle } from "@/components/primitives";
-import { Button } from "@nextui-org/react";
+import { Button, Textarea } from "@nextui-org/react";
 import { Spacer } from "@nextui-org/react";
 import { sendTrx } from '@/lib/wallet';
 import ProductList from "@/components/product-list";
@@ -12,6 +12,7 @@ const API_URL_CART = process.env.NEXT_PUBLIC_API_ENDPOINT + '/cart'
 
 export default function ShopPage() {
     const [totalAmount, setTotalAmount] = useState(0);
+    const [shippingAddress, setShippingAddress] = useState("");
     const [products, setProducts] = useState([]);
 
     const fetcher = (url) => fetch(url).then((res) => res.json());
@@ -20,7 +21,7 @@ export default function ShopPage() {
     })
 
     useEffect(() => {
-        if (!data || !data.status) {
+        if (!data || data.success === false) {
             return
         }
         const productIds = Object.keys(data)
@@ -43,7 +44,29 @@ export default function ShopPage() {
     }, [data]);
 
     async function buy() {
-        sendTrx(totalAmount)
+        if (!shippingAddress) {
+            return alert("Shipping Address is required.")
+        }
+
+        const trxHash = await sendTrx(totalAmount)
+
+        console.debug(trxHash)
+
+        const orderRaw = await fetch(process.env.NEXT_PUBLIC_API_ENDPOINT + '/order', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                shippingAddress,
+                trxHash,
+                totalAmount
+            })
+        })
+
+        const order = await orderRaw.json()
+        
+        console.debug(order)
+
+        alert(`order id ${order.id}`)
     }
 
     if (products.length === 0) {
@@ -63,9 +86,16 @@ export default function ShopPage() {
 
             <Spacer y={10} />
 
-            <ProductList products={products} />
+            <ProductList products={products} showAdd={false} showRemove={true} />
 
             <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
+                <Textarea
+                    type="text"
+                    label="Shipping Address"
+                    labelPlacement="outside"
+                    value={shippingAddress}
+                    onChange={(e) => setShippingAddress(e.target.value)}
+                />
                 <div>Total: {totalAmount}</div>
                 <div><Button onClick={buy}>Pay</Button></div>
             </div>

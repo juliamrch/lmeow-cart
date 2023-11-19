@@ -6,37 +6,32 @@ import { useEffect, useState } from "react";
 import useSWR from 'swr';
 import ProductList from "@/components/product-list";
 
-export default function Orders({ children }: { children: React.ReactNode }) {
+export default function MyOrders({ children }: { children: React.ReactNode }) {
     const [loading, setLoading] = useState(true)
 
     const fetcher = (url: string) => fetch(url).then((res) => res.json());
-    const { data, error: loggedAccountError } = useSWR(process.env.NEXT_PUBLIC_API_ENDPOINT + '/order', fetcher, {
+    const { data, error: loggedAccountError } = useSWR(process.env.NEXT_PUBLIC_API_ENDPOINT + '/order?self=true', fetcher, {
         refreshInterval: 1000 * 60,
     })
 
-    async function initState() {
-        try {
-            const loggedRaw = await fetch(process.env.NEXT_PUBLIC_API_ENDPOINT + '/loggedUser')
-            const logged = await loggedRaw.json()
-
-            if (logged.isAdmin === true) {
-                return setLoading(false)
-            }
-
-            window.location = '/shop'
-        } catch (e) {
-            console.debug('failed getting logged', e.message)
-        }
-    }
-
     useEffect(() => {
-        initState()
-    }, [])
+        if (data) {
+            setLoading(false)
+        }
+    }, [data])
 
     if (loading) {
         return (
             <div className="flex">
                 <h1 className={title()}>Loading... <Spinner /></h1>
+            </div>
+        );
+    }
+
+    if (data.length === 0) {
+        return (
+            <div className="flex">
+                <h1 className={title()}>You don't have any orders yet.</h1>
             </div>
         );
     }

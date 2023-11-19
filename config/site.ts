@@ -8,6 +8,10 @@ export const siteConfig = {
       label: "Shop",
       href: "/shop",
     },
+    {
+      label: "My Orders",
+      href: "/my-orders",
+    },
   ],
   adminItems: [
     {
